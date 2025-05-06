@@ -1,0 +1,65 @@
+create database ong_se;
+
+use ong_se;
+
+create table USUARIO (
+	id int primary key auto_increment,
+    nome varchar(100),
+    email varchar(100) unique,
+    senha varchar(15)
+);
+
+create table ONG (
+	id int primary key auto_increment,
+    nome varchar(50),
+    data_criacao date,
+    descricao varchar(200),
+    foto_url varchar(1000),
+    codigo_fundador char(10),
+    codigo_voluntario char(10)
+);
+
+create table MISSAO (
+	id int primary key auto_increment,
+    nome varchar(45),
+    tipo varchar(45),
+    data_missao date
+);
+
+create table ITENS (
+	id int primary key auto_increment,
+    nome varchar(45)
+);
+
+create table VINCULO (
+	id int,
+    fk_ONG int,
+    fk_USUARIO int,
+    data_vinculo date,
+    primary key (id, fk_ONG, fk_USUARIO),
+    constraint fkUsuarioVinculo foreign key (fk_USUARIO) references USUARIO(id),
+    constraint fkONGVisnculo foreign key (fk_ONG) references ONG(id)
+);
+
+create table ITENS_MISSAO (
+	id int,
+    fk_MISSAO int, 
+    fk_ITENS int,
+    quantidade_itens int,
+    primary key (id, fk_MISSAO, fk_ITENS),
+    constraint fkMissaoItensMissao foreign key (fk_MISSAO) references MISSAO(id),
+    constraint fkItensItensMissao foreign key (fk_ITENS) references ITENS(id)
+);
+
+create table PRESENCA (
+	id int,
+    fk_MISSAO int, 
+    fk_ONG int, 
+    fk_USUARIO int,
+    data_hora_presenca datetime default current_timestamp,
+    primary key (id, fk_MISSAO, fk_ONG, fk_USUARIO),
+    constraint fkMissaoPresenca foreign key (fk_MISSAO) references ITENS_MISSAO(fk_MISSAO),
+    constraint fkONGVinculo foreign key (fk_ONG) references VINCULO(fk_ONG),
+    constraint fkUsuarioVinc foreign key (fk_USUARIO) references VINCULO(fk_USUARIO)
+);
+
