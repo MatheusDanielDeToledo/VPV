@@ -9,15 +9,22 @@ create table USUARIO (
     senha varchar(15)
 );
 
+insert into USUARIO (nome, email, senha) values
+	('Matheus Daniel de Toledo', 'matheus@gmail.com', 'senha123');
+
 create table ONG (
-	id int primary key auto_increment,
+	id char(10) primary key,
     nome varchar(50),
     data_criacao date,
     descricao varchar(200),
-    foto_url varchar(1000),
-    codigo_fundador char(10),
-    codigo_voluntario char(10)
+    foto_url varchar(1000)
 );
+
+insert into ONG (id, nome, data_criacao) values
+	('1234567890', 'TESTE', '2020-02-02');
+
+insert into ONG (id, nome, data_criacao) values
+	('0987654321', 'TESTE_V', '2020-02-02');
 
 create table MISSAO (
 	id int primary key auto_increment,
@@ -33,12 +40,12 @@ create table ITENS (
 
 create table VINCULO (
 	id int,
-    fk_ONG int,
+    fk_ONG char(10),
     fk_USUARIO int,
     data_vinculo date,
     primary key (id, fk_ONG, fk_USUARIO),
     constraint fkUsuarioVinculo foreign key (fk_USUARIO) references USUARIO(id),
-    constraint fkONGVisnculo foreign key (fk_ONG) references ONG(id)
+    constraint fkONGVinculo foreign key (fk_ONG) references ONG(id)
 );
 
 create table ITENS_MISSAO (
@@ -54,12 +61,23 @@ create table ITENS_MISSAO (
 create table PRESENCA (
 	id int,
     fk_MISSAO int, 
-    fk_ONG int, 
+    fk_ONG char(10), 
     fk_USUARIO int,
     data_hora_presenca datetime default current_timestamp,
     primary key (id, fk_MISSAO, fk_ONG, fk_USUARIO),
     constraint fkMissaoPresenca foreign key (fk_MISSAO) references ITENS_MISSAO(fk_MISSAO),
-    constraint fkONGVinculo foreign key (fk_ONG) references VINCULO(fk_ONG),
-    constraint fkUsuarioVinc foreign key (fk_USUARIO) references VINCULO(fk_USUARIO)
+    constraint fkONGVinculoPresenca foreign key (fk_ONG) references VINCULO(fk_ONG),
+    constraint fkUsuarioVinculoPresenca foreign key (fk_USUARIO) references VINCULO(fk_USUARIO)
 );
 
+
+
+insert into VINCULO ( fk_ONG , fk_USUARIO) 
+	select ONG.id, USUARIO.id 
+		from (select ONG.id from ONG where id = '1234567890' 
+				union
+			select USUARIO.id from USUARIO where nome = 'Matheus Daniel de Toledo') as VINCULO;
+    
+select * from VINCULO;
+select * from USUARIO;
+select * from ONG;
