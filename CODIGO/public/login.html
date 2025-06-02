@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AquaTech | Login</title>
+
+    <script src="./js/sessao.js"></script>
+
+    <link rel="stylesheet" href="./css/login.css">
+</head>
+
+<body>
+
+    <!--Header-->
+
+    <div class="nav_bar">
+
+        <div id="logo">ONG.SE</div>
+
+        <div class="menu_nav_bar">
+            <a id="link" href="index.html">Voltar</a>
+            <a id="link" href="cadastro.html">Cadastre-se</a>
+        </div>
+    </div>
+
+
+    <div class="formulario">
+
+        <div class="campo">
+            <span class="titulo">E-mail:</span>
+            <input id="email_input" type="text" placeholder="email@dominio" onkeypress="this.style.width = ((this.value.length + 1) * 10.9) + 'px';">
+        </div>
+        <div class="campo" style="margin-top: 0%;">
+            <span class="titulo">Senha:</span>
+            <input id="senha_input" type="password" placeholder="******" onkeypress="this.style.width = ((this.value.length + 1) * 10) + 'px';">
+        </div>
+
+        <button class="botao" onclick="entrar()">Entrar</button>
+
+        <br>
+
+        <div id="div_mensagem"></div>
+    </div>
+
+</body>
+
+</html>
+
+<script>
+
+    function entrar() {
+
+        var emailVar = email_input.value;
+        var senhaVar = senha_input.value;
+
+        fetch("/usuarios/autenticar", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: emailVar,
+                senha: senhaVar
+            })
+        }).then(function (resultado) {
+            console.log("ESTOU NO THEN DO entrar()!")
+
+            if (resultado.ok) {
+                console.log(resultado);
+
+                resultado.json().then(json => {
+                    console.log(json);
+                    console.log(JSON.stringify(json));
+                    sessionStorage.EMAIL_USUARIO = json.email;
+                    sessionStorage.ONG = json.fk_ONG;
+                    sessionStorage.ID = json.id
+
+                    if (sessionStorage.ONG[8] == 0 && sessionStorage.ONG[9] == 0) {
+                        window.location = "dash.html";
+                    } else if (sessionStorage.ONG[8] != 0 || sessionStorage.ONG[9] != 0) {
+                        window.location = "voluntario.html";
+                    } else {
+                        console.log('acho que deu')
+                    }
+
+                });
+
+
+
+            } else {
+
+                console.log("Houve um erro ao tentar realizar o login!");
+
+                resposta.text().then(texto => {
+                    console.error(texto);
+                    finalizarAguardar(texto);
+                });
+            }
+
+
+
+        }).catch(function (erro) {
+            console.log(erro);
+        })
+
+        return false;
+
+
+
+
+    };
+
+
+
+</script>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AquaTech | Página Inicial</title>
+
+    <script src="./js/sessao.js"></script>
+
+    <link rel="stylesheet" href="./css/index.css">
+</head>
+
+<body>
+
+    <div class="nav_bar">
+
+        <span id="logo">ONG.SE</span>
+
+        <div class="menu_nav_bar">
+            <a href="login.html">login | </a>
+            <a href="cadastro.html">Cadastre-se</a>
+        </div>
+    </div>
+
+
+    <div class="contexto">
+        <p>ONG.se foi idealizada para ser uma plataforma que conecta e facilita o gerenciamento das atividades de
+            Organizações Não Governamentais.
+        </p>
+    </div>
+
+    <div class="parceiros">
+        <span>Parceiros</span>
+        <hr id="linha_sub">
+
+        <div class="listar_ong" id="ongs">
+    </div>
+
+    <div class="contate">
+        <span>Contate-nos</span>
+        <hr id="linha_sub">
+    </div>
+
+    <div id="div_mensagem">
+        <span id="teste_usuario"></span>
+    </div>
+
+
+</body>
+
+</html>
+
+<script>
+
+    window.onload = function () {
+        listarOngs()
+    }
+
+    function listarOngs() {
+
+        fetch("/usuarios/listarOngsIndex", {
+            method: "GET"
+        })
+            .then(response => response.json())
+            .then(areas => {
+                areas.forEach(registro => {
+                    ongs.innerHTML += `
+            <div class="ong_unidade"><img id="ong" src="${registro.foto_url}">${registro.nome}</div>
+            `;
+                });
+            })
+            .catch(error => {
+                console.error("Erro na requisição:", error);
+            });
+
+    }
+</script>

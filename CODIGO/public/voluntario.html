@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="css/voluntario.css">
+</head>
+
+<body>
+
+    <div class="nav_bar">
+
+        <span id="logo">ONG.SE</span>
+
+        <div class="menu_nav_bar">
+            <a onclick="up()">adicionar ONG</a>
+            <a href="login.html">Sair</a>
+        </div>
+    </div>
+
+    <div id="popup">
+        <div id="content-popup">
+            <img id="close" onclick="down()" src="assets/icons8-close-button.svg" alt="">
+            <div id="form"">
+                <h4>INSIRA O CODIGO DE ONG ABAIXO</h4>
+                <input type=" text" id="inp_codigo">
+                <button onclick="adicionar()">ADICIONAR</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="aviso">
+        <div id="content-aviso">
+            <img id="close-aviso" onclick="downAviso()" src="assets/icons8-close-button.svg" alt="">
+            <div id="form"">
+                <h4>A ONG DO CÓDIGO INSERIDO JÁ ESTÁ CADASTADA!</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class=" corpo">
+                <div class="listar_ong" id="ongs">
+
+                </div>
+
+
+                <div class="listar_missoes" id="missoes">
+                    <div id="missao">
+                        <span style="font-size: 15px;">2020-02-02</span>
+                        <span style="font-size: 25px;">SPTECH</span>
+                        <button>PARTICIPAR</button>
+                    </div>
+                </div>
+            </div>
+
+</body>
+
+</html>
+
+<script>
+
+    var OG = [];
+
+    var codigoVar = inp_codigo.value
+    var emailVar = sessionStorage.EMAIL_USUARIO
+
+    window.onload = function () {
+        listarOngs()
+    }
+
+    function up() {
+        popup.style.display = 'block'
+    }
+
+    function down() {
+        popup.style.display = 'none'
+    }
+
+    function upAviso() {
+        aviso.style.display = 'block'
+    }
+
+    function downAviso() {
+        aviso.style.display = 'none'
+    }
+
+    function adicionar() {
+
+
+
+        if (OG.includes(codigoVar)) {
+
+            upAviso()
+
+        } else {
+            ad()
+        }
+
+
+    }
+
+    function ad() {
+
+        var codigoVar = inp_codigo.value
+        var emailVar = sessionStorage.EMAIL_USUARIO
+
+        fetch("/usuarios/adicionarONG", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                codigo: codigoVar,
+                email: emailVar
+            }),
+        }).then(function (resposta) {
+            console.log("resposta: ", resposta);
+        })
+
+    }
+
+    function listarOngs() {
+
+        var idVar = sessionStorage.ID
+
+        fetch("/usuarios/enviarFiltroOng", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id: sessionStorage.ID
+            })
+        })
+            .then(response => response.json())
+            .then(respostaPost => {
+                console.log("POST enviado com sucesso:", respostaPost);
+
+                // Agora faz o GET, que usará o dado armazenado no servidor
+                return fetch("/usuarios/listarOngs", {
+                    method: "GET"
+                });
+            })
+            .then(response => response.json())
+            .then(areas => {
+                areas.forEach(registro => {
+
+                    if (OG.includes(registro.fk_dono)) {
+
+                    } else {
+                        OG.push(registro.fk_dono)
+                    }
+
+                    ongs.innerHTML += `
+                <div class="ong_unidade" value="${registro.fk_dono}" id="registro" onclick="listarMissoes(${registro.fk_dono})"><img id="ong" src="${registro.foto_url}">${registro.nome}</div>
+        `;
+                });
+            })
+            .catch(error => {
+                console.error("Erro na requisição:", error);
+            });
+    }
+
+    function listarMissoes(ongVar) {
+
+        fetch("/dash/filtroMissao", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                ong: ongVar
+            })
+        })
+            .then(response => response.json())
+            .then(respostaPost => {
+                console.log("POST enviado com sucesso:", respostaPost);
+
+                // Agora faz o GET, que usará o dado armazenado no servidor
+                return fetch("/dash/listarMissoes", {
+                    method: "GET"
+                });
+            })
+            .then(response => response.json())
+            .then(areas => {
+                areas.forEach(registro => {
+                    missoes.innerHTML += `
+                        <div id="missao">
+                            <span style="font-size: 15px;">${registro.data}</span>
+                            <span style="font-size: 25px;">${registro.nome}</span>
+                            <span><input type="checkbox" id="check" value="banana"><span>Vou levar</span></span>
+                            <button onclick="console.log(check.value)">PARTICIPAR</button>
+                        </div>
+`;
+                });
+            })
+            .catch(error => {
+                console.error("Erro na requisição:", error);
+            });
+    }
+
+
+</script>

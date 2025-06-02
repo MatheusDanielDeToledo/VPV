@@ -1,0 +1,149 @@
+* {
+    color: white;
+
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #494CF9;
+    margin: 0%;
+}
+
+a {
+    font-style: normal;
+    text-decoration: none;
+}
+
+select {
+    color: black;
+}
+
+select option{
+    color: black;
+}
+
+.nav_bar {
+    display: flex;
+    width: 100%;
+
+    background-color:#373ae4;
+    border-bottom: white solid 1px;    
+
+    flex-direction: row;
+}
+
+#logo {
+    margin-left: 1%;
+    font-size: 65px;
+}
+
+.menu_nav_bar {
+    display: flex;
+    width: 100%;
+
+    margin-right: 3%;
+
+    flex-direction: row;
+    justify-content:end;
+    align-self: center;
+
+    font-size: 24px;
+}
+
+#separadora {
+    height: 78vh;
+    width: 3px;
+    background-color: white;
+    margin-top: 28%;
+    font-size: 3px;
+
+
+}
+
+.dashboard {
+    width: 100%;
+    height: auto;
+
+    display: flex;
+    flex-direction: row;
+}
+
+.menu_lateral {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    justify-content: center;
+
+    margin-top: 0%;
+    width: 8%;
+    height: auto;
+}
+
+#icone {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#hide {
+    display: inline-block;
+    max-width: 0%;
+    vertical-align: bottom;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: max-width 1s ease-in-out;
+  }
+
+.menu_lateral:hover #hide{
+    max-width: 100%;
+}
+
+.menu_lateral img{
+    padding: 10px;
+    width: 50%;
+}
+
+.corpo_dash {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: auto;
+}
+
+.corpo_dash select {
+    width: 11%;
+}
+
+.grafico_itens {
+    width: 70%;
+    height: auto;
+    
+    margin-top: 5%;
+    
+    display: flex;
+    align-self: center;
+    justify-content: center;
+
+}
+
+#graph {
+    color: white;
+
+    width: 70%;
+    height: auto;
+}
+
+#KPI_qtdVoluntarios {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#num_voluntarios {
+    height: auto;
+}

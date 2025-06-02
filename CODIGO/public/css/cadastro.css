@@ -1,0 +1,70 @@
+* {
+    color: white;
+
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #494CF9;
+    margin: 0%;
+}
+
+a {
+    font-style: normal;
+    text-decoration: none;
+}
+
+.nav_bar {
+    display: flex;
+    width: 100%;
+
+    background-color:#373ae4;
+    border-bottom: white solid 1px;    
+
+    flex-direction: row;
+}
+
+#logo {
+    margin-left: 1%;
+    font-size: 65px;
+}
+
+.menu_nav_bar {
+    display: flex;
+    width: 100%;
+
+    margin-right: 3%;
+
+    flex-direction: row;
+    justify-content:end;
+    align-self: center;
+
+    font-size: 24px;
+}
+
+.formulario {
+
+    display: flex;
+
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 40px;
+}
+
+.campo input {
+    color: black;
+}
+
+.formulario button {
+    color: black;
+}

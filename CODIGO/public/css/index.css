@@ -1,0 +1,114 @@
+* {
+    color: white;
+
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #494CF9;
+    margin: 0%;
+}
+
+a {
+    font-style: normal;
+    text-decoration: none;
+}
+
+
+.nav_bar {
+    display: flex;
+    width: 100%;
+
+    background-color:#373ae4;
+    border-bottom: white solid 1px;    
+
+    flex-direction: row;
+}
+
+#logo {
+    margin-left: 1%;
+    font-size: 65px;
+}
+
+.menu_nav_bar {
+    display: flex;
+    width: 100%;
+
+    margin-right: 3%;
+
+    flex-direction: row;
+    justify-content:end;
+    align-self: center;
+
+    font-size: 24px;
+}
+
+.contexto {
+    width: 100%;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.parceiros {
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    font-size: 40px;
+
+    margin-left: 1%;
+}
+
+.parceiros hr {
+    width: 10%;
+
+    margin-right: 100%;
+    margin-top: 0;
+}
+
+.contate {
+    display: flex;
+    flex-direction: column;
+
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    font-size: 40px;
+}
+
+.contate hr {
+    width: 100%;
+
+    margin-right: 100%;
+    margin-top: 0;
+}
+
+.listar_ong {
+
+    width: 100%;
+
+    display: flex;
+    align-self: flex-start;
+    justify-content: flex-start;
+    flex-direction: row;
+}
+
+.ong_unidade {
+    width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    font-size: 20px;
+}
+
+#ong {
+    width: 90%;
+    border-radius: 50%;
+}
