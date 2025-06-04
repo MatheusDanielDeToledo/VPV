@@ -16,28 +16,33 @@
         <span id="logo">ONG.SE</span>
 
         <div class="menu_nav_bar">
-            <a href="index.html">Voltar | </a>
+            <a href="index.html">Voltar</a>
             <a href="login.html">Sair</a>
         </div>
     </div>
 
-    <div class="dashboard">
-        <div class="menu_lateral">
-            <div id="icone">
-                <img id="dash_home" src="assets/grafico-de-barras.png"><span id="hide">&nbsp; Dashboard</span>
-            </div>
-            <div id="icone">
-                <img id="adicionar_missao" src="assets/adicionar.png"><span id="hide">&nbsp; Adicionar missão</span>
-            </div>
+    <div class="menu_lateral">
+        <div id="icone" onclick="mudarDash()">
+            <img id="dash_home" src="assets/grafico-de-barras.png"><span id="hide">&nbsp; Dashboard</span>
         </div>
+        <div id="icone" onclick="mudarAdicionar()">
+            <img id="adicionar_missao" src="assets/adicionar.png"><span id="hide">&nbsp; Adicionar missão</span>
+        </div>
+    </div>
+
+    <div class="dashboard">
+
 
         <div class="corpo_dash">
-            <select name="" id="missaoSelect" onchange="buscarDados()">
 
-            </select>
-            <div id="KPI_qtdVoluntarios">
-                <h4>VOLUNTARIOS CONFIRMADOS</h4>
-                <h4 id="num_voluntarios">0</h4>
+            <div class="vMissoes">
+                <select name="" id="missaoSelect" onchange="buscarDados()">
+
+                </select>
+                <div id="KPI_qtdVoluntarios">
+                    <h4>VOLUNTARIOS CONFIRMADOS</h4>
+                    <h4 id="num_voluntarios">0</h4>
+                </div>
             </div>
 
             <div class="grafico_itens">
@@ -53,6 +58,14 @@
 </html>
 
 <script>
+
+    function mudarAdicionar() {
+        window.location = 'dashAdicionar.html'
+    }
+
+    function mudarDash() {
+
+    }
 
     window.onload = () => {
         listarMissoes()
