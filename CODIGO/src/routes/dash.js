@@ -11,6 +11,10 @@ router.post("/filtroDados", function (req, res) {
     dashController.filtroDados(req, res);
 });
 
+router.post("/atualizar_itens", function (req, res) {
+    dashController.atualizar_itens(req, res);
+});
+
 router.get("/buscarDados", function (req, res) {
     dashController.buscarDados(req, res);
 });

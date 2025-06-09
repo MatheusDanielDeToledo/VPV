@@ -62,10 +62,13 @@ create table ITENS_MISSAO (
     fk_MISSAO int, 
     fk_ITENS int,
     quantidade_itens int,
+    expectativa_itens int,
     primary key (id, fk_MISSAO, fk_ITENS),
     constraint fkMissaoItensMissao foreign key (fk_MISSAO) references MISSAO(id),
     constraint fkItensItensMissao foreign key (fk_ITENS) references ITENS(id)
 );
+
+select * from itens_missao;
 
 select * from itens_missao;
 
@@ -101,3 +104,7 @@ insert into VINCULO ( fk_ONG , fk_USUARIO)
 select * from VINCULO;
 select * from USUARIO;
 select * from ONG;
+
+update itens_missao set quantidade_itens = 200 where fk_missao = (select id from MISSAO where nome = 'SPTECH' and fk_ONG = 2222222200) and fk_itens = (select id from itens where nome = 'Marmita');
+
+select * from missao;

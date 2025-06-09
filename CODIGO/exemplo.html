@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="div_exemplo"></div>
+
+</body>
+
+</html>
+
+<script>
+
+    `
+        INSERT INTO tabela VALUES
+
+        ('marmita', '10'), 
+        ('marmita', '10'), 
+        ('marmita', '10'), 
+        ('marmita', '10'), 
+        ('marmita', '10'), 
+        ('marmita', '10'), 
+    `
+
+    var estoque = [
+        { item: "Marmita", qtd: '10' },
+        { item: "Talher", qtd: '10' },
+        { item: "Água", qtd: '10' },
+        { item: "Copo", qtd: '10' }
+    ]
+
+    function carregarElementos() {
+        var elementos = "";
+
+        for (let i = 0; i < estoque.length; i++) {
+            elementos += `<span>${i}.</span><input oninput="atualizar(${i})" id="input_${i}"> <br><br>`
+        }
+
+        div_exemplo.innerHTML = elementos;
+    }
+
+    function atualizar(indice_a_atualizar) {
+        estoque[indice_a_atualizar].qtd = document.getElementById(`input_${indice_a_atualizar}`).value;
+    }
+
+    function atualizarInputs() {
+        for (var i = 0; i < qtd; i++) {
+            const input = document.getElementById(`input_${i}`);
+
+            input.value = 1;
+        }
+    }
+
+
+    carregarElementos();
+
+</script>

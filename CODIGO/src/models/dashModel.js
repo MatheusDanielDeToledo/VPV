@@ -47,8 +47,26 @@ function listarVoluntarios(id, missao) {
     return database.executar(instrucaoSql);
 }
 
+function atualizar_itens(iten, quantidade, missao, id) {
+
+    var mensagem = ''
+
+    for (let i = 0; i < iten.length; i++) {
+        
+        mensagem += `update itens_missao set quantidade_itens = ${quantidade[i].nova_quantidade} where fk_missao = (select id from missao where nome = '${missao}' and fk_ong = ${id}) and fk_itens = (select id from itens where nome = '${iten}');`
+        
+    }
+
+    var instrucaoSql = mensagem    
+
+    console.log("Executando a instrução SQL: \n" + instrucaoSql);
+    return database.executar(instrucaoSql);
+
+}
+
 module.exports = {
     listarMissoes,
     buscarDados,
-    listarVoluntarios
+    listarVoluntarios,
+    atualizar_itens
 }

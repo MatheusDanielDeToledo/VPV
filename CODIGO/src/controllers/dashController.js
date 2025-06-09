@@ -7,7 +7,7 @@ function filtroMissao(req, res) {
     var id = req.body.ong
 
     filtro = id
-    res.json({mensagem: `Filtro de id, recebido`})
+    res.json({ mensagem: `Filtro de id, recebido` })
 }
 
 function listarMissoes(req, res) {
@@ -44,7 +44,7 @@ function filtroDados(req, res) {
     var missao = req.body.missao
 
     segundoFiltro = missao
-    res.json({mensagem: `Filtro de id, recebido`})
+    res.json({ mensagem: `Filtro de id, recebido` })
 }
 
 
@@ -81,12 +81,35 @@ function listarVoluntarios(req, res) {
     });
 }
 
+function atualizar_itens(req, res) {
+
+    var itens_nome = req.body.itens_nome
+    var itens_atualizar = req.body.itens_atualizar
+
+    console.log(itens_nome)
+    console.log(itens_atualizar)
+    console.log(segundoFiltro)
+
+    dashModel.atualizar_itens(itens_nome, itens_atualizar, segundoFiltro, filtro).then(function (resultado) {
+        if (resultado.length > 0) {
+            res.status(200).json(resultado);
+        } else {
+            res.status(204).send("Nenhum resultado encontrado!")
+        }
+    }).catch(function (erro) {
+        console.log(erro);
+        console.log("Houve um erro ao buscar as ultimas medidas.", erro.sqlMessage);
+        res.status(500).json(erro.sqlMessage);
+    });
+}
+
 
 module.exports = {
     listarMissoes,
     filtroMissao,
     buscarDados,
     filtroDados,
-    listarVoluntarios
+    listarVoluntarios,
+    atualizar_itens
 
 }

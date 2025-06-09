@@ -34,8 +34,7 @@
 
         <div class="seletor_externo" onclick="mudar()">
             <div class="seletor_interno" id="seletor_interno">
-                <span style="color: black;" id="atualizar">Atualizar</span>
-                <span style="color: black; display: none;" id="criar">Criar</span>
+                <span id="change"  style="color: black;">Atualizar</span>
             </div>
         </div>
 
@@ -69,7 +68,10 @@
 
 <script>
 
-    var itens = []
+    var itens_nome = []
+    var lista_itens = []
+
+    var lista_atualizar = []
 
     var esperado = []
     var real = []
@@ -83,7 +85,7 @@
     }
 
     function limpar() {
-        itens = []
+        lista_itens = []
         esperado = []
         real = []
 
@@ -97,15 +99,17 @@
     function mudar() {
 
         if (seletor_interno.style.marginRight == '45%') {
+
             seletor_interno.style.marginRight = "0%";
             seletor_interno.style.marginLeft = "45%";
-            atualizar.style.display = 'none'
-            criar.style.display = 'block'
+
+            change.innerHTML = 'Adicionar'
         } else {
+
             seletor_interno.style.marginRight = "45%";
             seletor_interno.style.marginLeft = "0%";
-            atualizar.style.display = 'block'
-            criar.style.display = 'none'
+
+            change.innerHTML = 'Atualizar'
         }
 
     }
@@ -159,6 +163,7 @@
 
         var missao = missaoSelect.value
         var id = sessionStorage.ONG
+        var i = 0
 
         if (missaoSelect.value == 0) {
             itens_da_missao.style.display = "none"
@@ -189,24 +194,37 @@
             .then(areas => {
                 areas.forEach(registro => {
 
-                    if (itens.includes(registro.nome)) {
-
-                        const elemento = document.getElementById(`iten_${itens.indexOf(registro.nome)}`)
-                        elemento.innerHTML = registro.quantidade_itens
+                    if (itens_nome.includes(registro.nome)) {
 
                     } else {
-                        itens.push(registro.nome)
+                        lista_itens.push(
+                            { nome: registro.nome, quantidade: registro.quantidade_itens }
+                        )
+
+                        itens_nome.push(registro.nome)
+
+
+                        for (let i = 0; i < lista_itens.length; i++) {
+
+                            if (lista_itens[0].nome == registro.nome) {
+                                break
+                            } else {
+
+                            }
+
+                        }
+
                         iten_nome.innerHTML += `<th>${registro.nome}</th>`
-                        iten.innerHTML += `<td id="iten_${itens.indexOf(registro.nome)}"></td>`
-                        atualizar_iten.innerHTML += `<input id="iten_${itens.indexOf(registro.nome)}" type="number" placeholder="Nova quantia"></input>`
-
-                        const elemento = document.getElementById(`iten_${itens.indexOf(registro.nome)}`)
-                        elemento.innerHTML = registro.quantidade_itens
-
+                        iten.innerHTML += `<td id="iten_${i}">${registro.quantidade_itens}</td>`
+                        atualizar_iten.innerHTML += `<input id="input_iten_${i}" oninput="atualizarLista(${i})" type="number" placeholder="Nova quantia"></input>`
 
                     }
 
-                    real[(itens.indexOf(registro.nome))] = (registro.quantidade_itens)
+                    const elemento = document.getElementById(`iten_${itens_nome.indexOf(registro.nome)}`)
+                    elemento.innerHTML = registro.quantidade_itens
+
+
+
 
                 });
             })
@@ -214,7 +232,7 @@
                 console.error("Erro na requisição:", error);
             });
 
-        console.log(itens)
+        console.log(lista_itens)
         console.log(real)
         console.log(esperado)
 
@@ -240,6 +258,27 @@
     }
 
     function atualizar() {
-        
+
+        fetch("/dash/atualizar_itens", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                itens_nome: itens_nome,
+                itens_atualizar: lista_atualizar
+            }),
+        }).then(function (resposta) {
+            console.log("resposta: ", resposta);
+        })
+
+    }
+
+    function atualizarLista(id) {
+
+        const input = document.getElementById(`input_iten_${id}`).value
+
+        lista_atualizar[id] = { nova_quantidade: input }
+
     }
 </script>

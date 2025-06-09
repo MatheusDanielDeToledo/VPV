@@ -95,6 +95,8 @@ function adicionarONG(req, res) {
     var codigo = req.body.codigo;
     var email = req.body.email
 
+    
+
     usuarioModel.cadastrarVinculo(codigo, email)
         .then(
             function (resultado) {
