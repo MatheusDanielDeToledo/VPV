@@ -15,7 +15,7 @@ insert into USUARIO (nome, email, senha) values
 
 select * from usuario;
 
-create table ONG (
+create table ong (
 	id char(10) primary key,
     nome varchar(50),
     data_criacao date,
@@ -30,11 +30,16 @@ create table MISSAO (
 	id int primary key auto_increment,
     nome varchar(45),
     tipo varchar(45),
-    data_missao date
+    data_missao date,
+    fk_ong char(10)
+    constraint fkMissaoOng
+        Foreign key (fk_ong) REFERENCES ong(id)
 );
 
 select * from missao;
 select data_missao from missao;
+
+select * from itens_missao;
 DESCRIBE missao;
 
 select * from itens_missao;
@@ -68,9 +73,17 @@ create table ITENS_MISSAO (
     constraint fkItensItensMissao foreign key (fk_ITENS) references ITENS(id)
 );
 
-select * from itens_missao;
+alter table itens_missao modify id int AUTO_INCREMENT;
 
 select * from itens_missao;
+
+select * from itens;
+
+(select id from missao where nome = 'SPTECH' and fk_ong = '2222222200');
+
+(select id from itens where nome = 'Janta');
+
+delete from itens where id = 5;
 
 update itens_missao set quantidade_itens = 100 where id = 1;
 
@@ -90,6 +103,17 @@ select * from vinculo;
 select * from itens_missao;
 
 select * from missao;
+
+select * from presenca;
+
+select count(p.id) as totalVoluntarios from presenca p
+            join itens_missao im
+                on p.fk_missao = im.id
+            join missao m
+                on im.fk_missao = m.id
+            where p.fk_ong = 2222222200
+            and
+            m.nome = 'SPTECH';
 
 insert into presenca values 
     (1, 4, 2222222200, 3, DEFAULT);

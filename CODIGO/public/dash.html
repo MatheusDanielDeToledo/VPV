@@ -1,225 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="css/dash.css">
+    <link rel="stylesheet" href="css/dash.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <div class="nav_bar">
+      <span id="logo">ONG.SE</span>
 
-        <span id="logo">ONG.SE</span>
-
-        <div class="menu_nav_bar">
-            <a href="index.html">Voltar</a>
-            <a href="login.html">Sair</a>
-        </div>
+      <div class="menu_nav_bar">
+        <a href="index.html">Voltar</a>
+        <a href="login.html">Sair</a>
+      </div>
     </div>
 
     <div class="menu_lateral">
-        <div id="icone" onclick="mudarDash()">
-            <img id="dash_home" src="assets/grafico-de-barras.png"><span id="hide">&nbsp; Dashboard</span>
-        </div>
-        <div id="icone" onclick="mudarAdicionar()">
-            <img id="adicionar_missao" src="assets/adicionar.png"><span id="hide">&nbsp; Adicionar missão</span>
-        </div>
+      <div id="icone" onclick="mudarDash()">
+        <img id="dash_home" src="assets/grafico-de-barras.png" /><span id="hide"
+          >&nbsp; Dashboard</span
+        >
+      </div>
+      <div id="icone" onclick="mudarAdicionar()">
+        <img id="adicionar_missao" src="assets/adicionar.png" /><span id="hide"
+          >&nbsp; Adicionar missão</span
+        >
+      </div>
     </div>
 
     <div class="dashboard">
-
-
-        <div class="corpo_dash">
-
-            <div class="vMissoes">
-                <select name="" id="missaoSelect" onchange="buscarDados()">
-
-                </select>
-                <div id="KPI_qtdVoluntarios">
-                    <h4>VOLUNTARIOS CONFIRMADOS</h4>
-                    <h4 id="num_voluntarios">0</h4>
-                </div>
-            </div>
-
-            <div class="grafico_itens">
-                <div id="graph">
-                    <canvas id="myChart"></canvas>
-                </div>
-            </div>
+      <div class="corpo_dash">
+        <div class="vMissoes">
+          <select name="" id="missaoSelect" onchange="buscarDados(), limpar()"></select>
+          <div id="KPI_qtdVoluntarios">
+            <h4>VOLUNTARIOS CONFIRMADOS</h4>
+            <h4 id="num_voluntarios">0</h4>
+          </div>
         </div>
 
+        <div class="grafico_itens">
+          <div id="graph">
+            <canvas id="myChart"></canvas>
+          </div>
+        </div>
+      </div>
     </div>
-</body>
-
+  </body>
 </html>
 
 <script>
+  var itens = [];
+  var esperado = [];
+  var real = [];
 
-    function mudarAdicionar() {
-        window.location = 'dashAdicionar.html'
-    }
+  var mensagem_itens = [];
+  var mensagem_esperado = [];
+  var mensagem_real = [];
 
-    function mudarDash() {
+  function mudarAdicionar() {
+    window.location = "dashAdicionar.html";
+  }
 
-    }
+  function limpar() {
+    itens.length = 0;
+    esperado.length = 0;
+    real.length = 0;
+  }
 
-    window.onload = () => {
-        listarMissoes()
-        buscarDados()
-        setInterval(buscarDados, 1000)
+  window.onload = () => {
+    listarMissoes();
+    buscarDados();
+    setInterval(buscarDados, 1000);
 
-        listarVoluntarios()
-        setInterval(listarVoluntarios, 1000)
-    }
+    listarVoluntarios();
+    setInterval(listarVoluntarios, 1000);
+  };
 
-    Chart.defaults.color = '#fff';
+  Chart.defaults.color = "#fff";
 
-    const ctx = document.getElementById('myChart');
+  const ctx = document.getElementById("myChart");
 
-    var itens = []
-
-    var esperado = []
-    var real = []
-
-    const grafico = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: itens,
-            datasets: [{
-                label: 'Quantidade esperada',
-                data: esperado,
-                borderWidth: 1,
-
-
-            }, {
-                label: 'Quantidade real',
-                data: real,
-                borderWidth: 1
-            }
-            ]
+  const grafico = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: itens,
+      datasets: [
+        {
+          label: "Quantidade esperada",
+          data: esperado,
+          borderWidth: 1,
         },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
-            label: {
-                display: true,
-                color: '#fff'
-            }
-        }
-    });
+        {
+          label: "Quantidade real",
+          data: real,
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+      label: {
+        display: true,
+        color: "#fff",
+      },
+    },
+  });
 
+  function listarMissoes() {
+    var ongVar = sessionStorage.ONG;
 
-    function listarMissoes() {
+    missaoSelect.innerHTML = "<option value=null>Selecione uma missão</option>";
 
-        var ongVar = sessionStorage.ONG;
+    fetch("/dash/filtroMissao", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ong: ongVar,
+      }),
+    })
+      .then((response) => response.json())
+      .then((respostaPost) => {
+        console.log("POST enviado com sucesso:", respostaPost);
 
-        missaoSelect.innerHTML = '<option value=null>Selecione uma missão</option>'
-
-        fetch("/dash/filtroMissao", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                ong: ongVar
-            })
-        })
-            .then(response => response.json())
-            .then(respostaPost => {
-                console.log("POST enviado com sucesso:", respostaPost);
-
-                // Agora faz o GET, que usará o dado armazenado no servidor
-                return fetch("/dash/listarMissoes", {
-                    method: "GET"
-                });
-            })
-            .then(response => response.json())
-            .then(areas => {
-                areas.forEach(registro => {
-                    missaoSelect.innerHTML += `
+        // Agora faz o GET, que usará o dado armazenado no servidor
+        return fetch("/dash/listarMissoes", {
+          method: "GET",
+        });
+      })
+      .then((response) => response.json())
+      .then((areas) => {
+        areas.forEach((registro) => {
+          missaoSelect.innerHTML += `
                             <option value="${registro.nome}">${registro.nome}</option>
 `;
-                });
-            })
-            .catch(error => {
-                console.error("Erro na requisição:", error);
-            });
-    }
+        });
+      })
+      .catch((error) => {
+        console.error("Erro na requisição:", error);
+      });
+  }
 
-    function buscarDados() {
+  function buscarDados() {
+    var missao = missaoSelect.value;
+    var id = sessionStorage.ONG;
 
-        var missao = missaoSelect.value
-        var id = sessionStorage.ONG
+    fetch("/dash/filtroDados", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        missao: missao,
+        id: id,
+      }),
+    })
+      .then((response) => response.json())
+      .then((respostaPost) => {
+        console.log("POST enviado com sucesso:", respostaPost);
 
-        fetch("/dash/filtroDados", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                missao: missao,
-                id: id
-            })
-        })
-            .then(response => response.json())
-            .then(respostaPost => {
-                console.log("POST enviado com sucesso:", respostaPost);
+        // Agora faz o GET, que usará o dado armazenado no servidor
+        return fetch("/dash/buscarDados", {
+          method: "GET",
+        });
+      })
+      .then((response) => response.json())
+      .then((areas) => {
+        areas.forEach((registro) => {
+          if (itens.includes(registro.nome)) {
+          } else {
+            itens.push(registro.nome);
+          }
 
-                // Agora faz o GET, que usará o dado armazenado no servidor
-                return fetch("/dash/buscarDados", {
-                    method: "GET"
-                });
-            })
-            .then(response => response.json())
-            .then(areas => {
-                areas.forEach(registro => {
+          esperado[itens.indexOf(registro.nome)] = registro.expectativa_itens;
+          real[itens.indexOf(registro.nome)] = registro.quantidade_itens;
+        });
+      })
+      .catch((error) => {
+        console.error("Erro na requisição:", error);
+      });
 
-                    if (itens.includes(registro.nome)) {
+    console.log(itens);
+    console.log(real);
+    console.log(esperado);
 
-                    } else {
-                        itens.push(registro.nome)
-                    }
+    grafico.update();
+  }
 
-                    esperado[(itens.indexOf(registro.nome))] = (registro.expectativa_itens)
-                    real[(itens.indexOf(registro.nome))] = (registro.quantidade_itens)
-
-                });
-            })
-            .catch(error => {
-                console.error("Erro na requisição:", error);
-            });
-
-        console.log(itens)
-        console.log(real)
-        console.log(esperado)
-
-        grafico.update();
-
-    }
-
-    function listarVoluntarios() {
-
-        fetch("/dash/listarVoluntarios", {
-            method: "GET"
-        })
-            .then(response => response.json())
-            .then(areas => {
-                areas.forEach(registro => {
-                    num_voluntarios.innerHTML = `
+  function listarVoluntarios() {
+    fetch("/dash/listarVoluntarios", {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((areas) => {
+        areas.forEach((registro) => {
+          num_voluntarios.innerHTML = `
                         ${registro.totalVoluntarios}
             `;
-                });
-            })
-            .catch(error => {
-                console.error("Erro na requisição:", error);
-            });
-
-    }
+        });
+      })
+      .catch((error) => {
+        console.error("Erro na requisição:", error);
+      });
+  }
 </script>

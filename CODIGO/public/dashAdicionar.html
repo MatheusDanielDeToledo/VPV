@@ -2,17 +2,15 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="css/dash.css">
+    <link rel="stylesheet" href="css/dash.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
-
     <div class="nav_bar">
-
         <span id="logo">ONG.SE</span>
 
         <div class="menu_nav_bar">
@@ -23,242 +21,373 @@
 
     <div class="menu_lateral">
         <div id="icone" onclick="mudarDash()">
-            <img id="dash_home" src="assets/grafico-de-barras.png"><span id="hide">&nbsp; Dashboard</span>
+            <img id="dash_home" src="assets/grafico-de-barras.png" /><span id="hide">&nbsp; Dashboard</span>
         </div>
         <div id="icone" onclick="mudarAdicionar()">
-            <img id="adicionar_missao" src="assets/adicionar.png"><span id="hide">&nbsp; Adicionar missão</span>
+            <img id="adicionar_missao" src="assets/adicionar.png" /><span id="hide">&nbsp; Adicionar</span>
         </div>
     </div>
 
     <div class="dashboard_adicionar">
-
         <div class="seletor_externo" onclick="mudar()">
             <div class="seletor_interno" id="seletor_interno">
-                <span id="change"  style="color: black;">Atualizar</span>
+                <span id="change" style="color: black">Atualizar</span>
             </div>
         </div>
 
-        <div class="corpo_dash_criar" style="display: none;">
-            CRIAR MISSAO
+        <div class="corpo_dash_criar" id="corpo_dash_criar" style="display: none">
+            <h4>CRIAR MISSAO</h4>
+
+            <div class="dados">
+                <div class="dado_missao">
+                    <label for="nome_missao">Nome da missao</label>
+                    <input id="nome_missao" type="text" />
+                </div>
+
+                <div class="dado_missao">
+                    <label for="nome_missao">Tipo</label>
+                    <input id="tipo_missao" type="text" />
+                </div>
+
+                <div class="dado_missao">
+                    <label for="nome_missao">Data</label>
+                    <input id="data_missao" type="text" maxlength="10" />
+                </div>
+            </div>
+
+            <button onclick="criarMissao()" style="color: black">
+                CRIAR MISSAO
+            </button>
         </div>
 
-        <div class="corpo_dash_adicionar">
-            <select name="" id="missaoSelect" onchange="buscarDados(), limpar()">
+        <div class="corpo_dash_adicionar" id="corpo_dash_adicionar">
+            <select name="" id="missaoSelect" onchange="limpar(), buscarDados(), addItenShow()"></select>
 
-            </select>
+            <div class="tabela">
+                <table id="itens_da_missao" style="display: none">
+                    <tr id="iten_nome"></tr>
+                    <tr id="iten"></tr>
+                    <tr id="atualizar_iten"></tr>
+                </table>
 
-            <table id="itens_da_missao" style="display: none;">
-                <tr id="iten_nome">
+                <button id="adicionar_iten_show" style="display: none" onclick="up()">
+                    +
+                </button>
+            </div>
 
-                </tr>
-                <tr id="iten">
-
-                </tr>
-                <tr id="atualizar_iten">
-
-                </tr>
-            </table>
-
-            <button onclick="atualizar()" style="color: black">ATUALIZAR QUANTIDADE</button>
+            <div id="popup">
+                <div id="content-popup">
+                    <img id="close" onclick="down()" src="assets/icons8-close-button.svg" alt="" />
+                    <div id="form"">
+            <h4>Insira um novo item para a sua missao</h4>
+            <input type=" text" id="inp_novo_iten" style="color: white" />
+                    <button onclick="addIten()">ADICIONAR</button>
+                </div>
+            </div>
         </div>
+
+        <div id="aviso">
+            <div id="content-aviso">
+                <img id="close-aviso" onclick="downAviso()" src="assets/icons8-close-button.svg" alt="" />
+                <div id="form"">
+          <h4>Este item já esta presente na sua missao</h4>
+        </div>
+      </div>
     </div>
-</body>
+
+    <div id=" aviso_sucesso" style="display: none;">
+                    <div id="content-aviso">
+                        <img id="close-aviso" onclick="downAviso()" src="assets/icons8-close-button.svg" alt="" />
+                        <div id="form"">
+          <h4>Iten adicionado com sucesso</h4>
+        </div>
+      </div>
+    </div>
+
+    <button onclick=" atualizar()" style="color: black">
+                            ATUALIZAR QUANTIDADE
+                            </button>
 
 </html>
 
 <script>
+    const maskDate = (value) => {
+        let v = value.replace(/\D/g, "").slice(0, 8); // permite até 8 dígitos (ddmmyyyy)
+        if (v.length >= 5) {
+            return `${v.slice(0, 2)}/${v.slice(2, 4)}/${v.slice(4)}`;
+        } else if (v.length >= 3) {
+            return `${v.slice(0, 2)}/${v.slice(2)}`;
+        }
+        return v;
+    };
 
-    var itens_nome = []
-    var lista_itens = []
+    const input = document.getElementById("data_missao");
+    input.addEventListener("input", (e) => {
+        const cursorPos = input.selectionStart;
+        const originalLength = input.value.length;
+        input.value = maskDate(input.value);
+        // opcional: manter o cursor ao final:
+        const diff = input.value.length - originalLength;
+        input.setSelectionRange(cursorPos + diff, cursorPos + diff);
+    });
 
-    var lista_atualizar = []
+    window.onload = () => {
+        listarMissoes();
+        buscarDados();
+        setInterval(buscarDados, 1000);
+    };
 
-    var esperado = []
-    var real = []
+    var itens_nome = [];
+    var lista_itens = [];
+
+    var lista_atualizar = [];
+
+    var esperado = [];
+    var real = [];
+
+    mensagem_nome = "";
+    mensagem_iten = "";
+    mensagem_atualizar = "";
 
     function mudarAdicionar() {
-        window.location = 'dashAdicionar.html'
+        window.location = "dashAdicionar.html";
     }
 
     function mudarDash() {
-        window.location = 'dash.html'
+        window.location = "dash.html";
     }
 
     function limpar() {
-        lista_itens = []
-        esperado = []
-        real = []
+        itens_nome = [];
+        lista_itens = [];
+        esperado = [];
+        real = [];
 
-        atualizar_iten.innerHTML = ''
-        iten_nome.innerHTML = ''
-        iten.innerHTML = ''
-
-
+        mensagem_nome = "";
+        mensagem_iten = "";
+        mensagem_atualizar = "";
     }
 
     function mudar() {
-
-        if (seletor_interno.style.marginRight == '45%') {
-
+        if (seletor_interno.style.marginRight == "45%") {
             seletor_interno.style.marginRight = "0%";
             seletor_interno.style.marginLeft = "45%";
 
-            change.innerHTML = 'Adicionar'
-        } else {
+            change.innerHTML = "Adicionar";
 
+            corpo_dash_criar.style.display = "flex";
+            corpo_dash_adicionar.style.display = "none";
+        } else {
             seletor_interno.style.marginRight = "45%";
             seletor_interno.style.marginLeft = "0%";
 
-            change.innerHTML = 'Atualizar'
-        }
+            change.innerHTML = "Atualizar";
 
+            corpo_dash_adicionar.style.display = "flex";
+            corpo_dash_criar.style.display = "none";
+        }
     }
 
-    window.onload = () => {
-        listarMissoes()
-        buscarDados()
-        setInterval(buscarDados, 1000)
+    function addItenShow() {
+        if (missaoSelect.value != 0) {
+            adicionar_iten_show.style.display = "block";
+        } else {
+            adicionar_iten_show.style.display = "none";
+        }
+    }
+
+    function up() {
+        popup.style.display = "block";
+    }
+
+    function down() {
+        popup.style.display = "none";
+    }
+
+    function downAviso() {
+        aviso.style.display = "none";
+        aviso_sucesso.style.display = "none";
+    }
+
+    function addIten() {
+        var nome = inp_novo_iten.value;
+        var todos_itens = []
+        var verificacao = false
+
+        if (itens_nome.includes(nome)) {
+            aviso.style.display = "block";
+        } else {
+
+            fetch("/dash/listar_itens", {
+                method: "GET",
+            })
+                .then((response) => response.json())
+                .then((areas) => {
+                    for (let i = 0; i < areas.length; i++) {
+                        if (
+                            areas[i].nome = nome
+                        ) {
+                            verificacao = true
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erro na requisição:", error);
+                });
+
+            if (verificacao != true) {
+                fetch("/dash/add_iten", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        nome: nome
+                    }),
+                }).then(function (resposta) {
+                    fetch("/dash/adicionar_iten", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    nome: nome
+                }),
+            }).then(function (resposta) {
+                console.log("resposta: ", resposta);
+               
+                    aviso_sucesso.style.display = "block";
+                
+            });
+                });
+            }
+
+            
+
+
+        }
     }
 
     function listarMissoes() {
-
         var ongVar = sessionStorage.ONG;
 
-        missaoSelect.innerHTML = '<option value= 0>Selecione uma missão</option>'
-
-
+        missaoSelect.innerHTML = "<option value= 0>Selecione uma missão</option>";
 
         fetch("/dash/filtroMissao", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                ong: ongVar
-            })
+                ong: ongVar,
+            }),
         })
-            .then(response => response.json())
-            .then(respostaPost => {
+            .then((response) => response.json())
+            .then((respostaPost) => {
                 console.log("POST enviado com sucesso:", respostaPost);
 
                 // Agora faz o GET, que usará o dado armazenado no servidor
                 return fetch("/dash/listarMissoes", {
-                    method: "GET"
+                    method: "GET",
                 });
             })
-            .then(response => response.json())
-            .then(areas => {
-                areas.forEach(registro => {
+            .then((response) => response.json())
+            .then((areas) => {
+                areas.forEach((registro) => {
                     missaoSelect.innerHTML += `
-                            <option value="${registro.nome}">${registro.nome}</option>
-`;
+                              <option value="${registro.nome}">${registro.nome}</option>
+  `;
                 });
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error("Erro na requisição:", error);
             });
     }
 
     function buscarDados() {
-
-        var missao = missaoSelect.value
-        var id = sessionStorage.ONG
-        var i = 0
-
-        if (missaoSelect.value == 0) {
-            itens_da_missao.style.display = "none"
-        } else {
-            itens_da_missao.style.display = "block"
-        }
+        var missao = missaoSelect.value;
+        var id = sessionStorage.ONG;
+        var i = 0;
 
         fetch("/dash/filtroDados", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             },
             body: JSON.stringify({
                 missao: missao,
-                id: id
-            })
+                id: id,
+            }),
         })
-            .then(response => response.json())
-            .then(respostaPost => {
+            .then((response) => response.json())
+            .then((respostaPost) => {
                 console.log("POST enviado com sucesso:", respostaPost);
 
                 // Agora faz o GET, que usará o dado armazenado no servidor
                 return fetch("/dash/buscarDados", {
-                    method: "GET"
+                    method: "GET",
                 });
             })
-            .then(response => response.json())
-            .then(areas => {
-                areas.forEach(registro => {
+            .then((response) => response.json())
+            .then((areas) => {
+                if (areas.length <= 0) {
+                    itens_da_missao.style.display = "none";
+                } else {
+                    itens_da_missao.style.display = "block";
 
-                    if (itens_nome.includes(registro.nome)) {
+                    areas.forEach((registro) => {
+                        if (itens_nome.includes(registro.nome)) {
+                        } else {
+                            lista_itens.push({
+                                nome: registro.nome,
+                                quantidade: registro.quantidade_itens,
+                            });
 
-                    } else {
-                        lista_itens.push(
-                            { nome: registro.nome, quantidade: registro.quantidade_itens }
-                        )
+                            itens_nome.push(registro.nome);
 
-                        itens_nome.push(registro.nome)
+                            mensagem_nome += `<th>${registro.nome}</th>`;
+                            mensagem_iten += `<td id="iten_${itens_nome.indexOf(registro.nome)}">${registro.quantidade_itens}</td>`;
+                            mensagem_atualizar += `<td><input id="input_iten_${itens_nome.indexOf(registro.nome)}" oninput="atualizarLista(${id})" type="number" placeholder="Nova quantia"></input></td>`;
 
-
-                        for (let i = 0; i < lista_itens.length; i++) {
-
-                            if (lista_itens[0].nome == registro.nome) {
-                                break
-                            } else {
-
-                            }
-
+                            iten_nome.innerHTML = mensagem_nome;
+                            iten.innerHTML = mensagem_iten;
+                            atualizar_iten.innerHTML = mensagem_atualizar;
                         }
 
-                        iten_nome.innerHTML += `<th>${registro.nome}</th>`
-                        iten.innerHTML += `<td id="iten_${i}">${registro.quantidade_itens}</td>`
-                        atualizar_iten.innerHTML += `<input id="input_iten_${i}" oninput="atualizarLista(${i})" type="number" placeholder="Nova quantia"></input>`
-
-                    }
-
-                    const elemento = document.getElementById(`iten_${itens_nome.indexOf(registro.nome)}`)
-                    elemento.innerHTML = registro.quantidade_itens
-
-
-
-
-                });
+                        const elemento = document.getElementById(
+                            `iten_${itens_nome.indexOf(registro.nome)}`
+                        );
+                        elemento.innerHTML = registro.quantidade_itens;
+                    });
+                }
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error("Erro na requisição:", error);
             });
 
-        console.log(lista_itens)
-        console.log(real)
-        console.log(esperado)
-
+        console.log(lista_itens);
+        console.log(real);
+        console.log(esperado);
     }
 
     function listarVoluntarios() {
-
         fetch("/dash/listarVoluntarios", {
-            method: "GET"
+            method: "GET",
         })
-            .then(response => response.json())
-            .then(areas => {
-                areas.forEach(registro => {
+            .then((response) => response.json())
+            .then((areas) => {
+                areas.forEach((registro) => {
                     num_voluntarios.innerHTML = `
-                        ${registro.totalVoluntarios}
-            `;
+                          ${registro.totalVoluntarios}
+              `;
                 });
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error("Erro na requisição:", error);
             });
-
     }
 
     function atualizar() {
-
         fetch("/dash/atualizar_itens", {
             method: "POST",
             headers: {
@@ -266,19 +395,42 @@
             },
             body: JSON.stringify({
                 itens_nome: itens_nome,
-                itens_atualizar: lista_atualizar
+                itens_atualizar: lista_atualizar,
             }),
         }).then(function (resposta) {
             console.log("resposta: ", resposta);
-        })
-
+        });
     }
 
     function atualizarLista(id) {
+        const input = document.getElementById(`input_iten_${id}`).value;
 
-        const input = document.getElementById(`input_iten_${id}`).value
+        lista_atualizar[id] = { nova_quantidade: input };
+    }
 
-        lista_atualizar[id] = { nova_quantidade: input }
+    function criarMissao() {
+        var data = [];
 
+        var nome = document.getElementById("nome_missao").value;
+        var tipo = document.getElementById("tipo_missao").value;
+        data.push(document.getElementById("data_missao").value.split("/"));
+
+        console.log(data);
+        console.log(nome);
+        console.log(tipo);
+
+        fetch("/dash/criar_missao", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                nome: nome,
+                tipo: tipo,
+                data: data,
+            }),
+        }).then(function (resposta) {
+            console.log("resposta: ", resposta);
+        });
     }
 </script>
