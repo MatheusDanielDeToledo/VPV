@@ -28,4 +28,8 @@ router.post("/adicionarONG", function(req, res) {
     usuarioController.adicionarONG(req, res);
 })
 
+router.post("/participar", function(req, res) {
+    usuarioController.participar(req, res);
+})
+
 module.exports = router;

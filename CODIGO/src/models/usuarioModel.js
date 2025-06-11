@@ -62,8 +62,13 @@ function listarOngsIndex() {
     return database.executar(instrucaoSql);
 }
 
-function listarMissoes() {
-
+function participar(id, ong, missao) {
+    instrucaoSql = `
+        insert into presenca (fk_missao, fk_ong, fk_usuario) values
+            ((select m.id from missao m where nome = '${missao}' and fk_ong = (select id from ong where nome = concat((select nome from ong where id = ${ong}), '_' , 'DONO'))), ${ong}, ${id})    
+    `;
+    console.log("Executando a instrução SQL: \n" + instrucaoSql);
+    return database.executar(instrucaoSql);
 }
 
 module.exports = {
@@ -72,5 +77,5 @@ module.exports = {
     cadastrarVinculo,
     listarOngs,
     listarOngsIndex,
-    listarMissoes
+    participar
 };

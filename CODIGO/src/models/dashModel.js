@@ -31,13 +31,7 @@ function buscarDados(id, missao) {
 function listarVoluntarios(id, missao) {
   var instrucaoSql = `
         select count(p.id) as totalVoluntarios from presenca p
-            join itens_missao im
-                on p.fk_missao = im.id
-            join missao m
-                on im.fk_missao = m.id
-            where p.fk_ong = ${id}
-            and
-            m.nome = '${missao}' 
+            where fk_missao = (select id from missao where nome = '${missao}' and fk_ong = ${id}) 
     `;
 
   console.log("Executando a instrução SQL: \n" + instrucaoSql);

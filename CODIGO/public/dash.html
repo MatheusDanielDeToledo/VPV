@@ -34,7 +34,11 @@
     <div class="dashboard">
       <div class="corpo_dash">
         <div class="vMissoes">
-          <select name="" id="missaoSelect" onchange="buscarDados(), limpar()"></select>
+          <select
+            name=""
+            id="missaoSelect"
+            onchange="buscarDados(), limpar()"
+          ></select>
           <div id="KPI_qtdVoluntarios">
             <h4>VOLUNTARIOS CONFIRMADOS</h4>
             <h4 id="num_voluntarios">0</h4>
@@ -59,6 +63,8 @@
   var mensagem_itens = [];
   var mensagem_esperado = [];
   var mensagem_real = [];
+
+  var voluntario = 0;
 
   function mudarAdicionar() {
     window.location = "dashAdicionar.html";
@@ -180,7 +186,7 @@
             itens.push(registro.nome);
           }
 
-          esperado[itens.indexOf(registro.nome)] = registro.expectativa_itens;
+          esperado[itens.indexOf(registro.nome)] = voluntario * 10;
           real[itens.indexOf(registro.nome)] = registro.quantidade_itens;
         });
       })
@@ -191,6 +197,8 @@
     console.log(itens);
     console.log(real);
     console.log(esperado);
+
+    
 
     grafico.update();
   }
@@ -205,6 +213,7 @@
           num_voluntarios.innerHTML = `
                         ${registro.totalVoluntarios}
             `;
+          voluntario = registro.totalVoluntarios
         });
       })
       .catch((error) => {

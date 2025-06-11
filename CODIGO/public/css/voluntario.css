@@ -226,7 +226,7 @@ a:hover {
   background-color: #373ae4;
 
   transition: all 0.3s ease-in-out;
-  z-index: -2;
+  z-index: +2;
 }
 
 #missao:hover {

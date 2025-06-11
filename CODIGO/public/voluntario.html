@@ -51,7 +51,7 @@
                     <div id="missao">
                         <span style="font-size: 15px;">2020-02-02</span>
                         <span style="font-size: 25px;">SPTECH</span>
-                        <button>PARTICIPAR</button>
+                        <button onclick="participar()">PARTICIPAR</button>
                     </div>
                 </div>
             </div>
@@ -139,7 +139,6 @@
             .then(respostaPost => {
                 console.log("POST enviado com sucesso:", respostaPost);
 
-                // Agora faz o GET, que usará o dado armazenado no servidor
                 return fetch("/usuarios/listarOngs", {
                     method: "GET"
                 });
@@ -192,7 +191,7 @@
                             <span style="font-size: 15px;">${registro.data}</span>
                             <span style="font-size: 25px;">${registro.nome}</span>
                             <span><input type="checkbox" id="check" value="banana"><span>Vou levar</span></span>
-                            <button onclick="console.log(check.value)">PARTICIPAR</button>
+                            <button onclick="participar('${registro.nome}')">PARTICIPAR</button>
                         </div>
 `;
                 });
@@ -202,5 +201,26 @@
             });
     }
 
+    function participar(missao) {
+
+        var id = sessionStorage.ID
+        var ong = sessionStorage.ONG
+        var missao = missao
+
+        fetch("/usuarios/participar", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                id: id,
+                ong: ong,
+                missao: missao
+            }),
+        }).then(function (resposta) {
+            console.log("resposta: ", resposta);
+        })
+
+    }
 
 </script>
